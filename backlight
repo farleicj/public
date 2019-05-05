@@ -1,0 +1,39 @@
+#!/bin/bash
+#changes screen brightness
+if [[ $# == 2 ]]; then
+	case $1 in
+		inc)
+			curbright1=$(cat /sys/class/backlight/intel_backlight/brightness)
+			num1=$((curbright1+$2))
+			if [[ $num1 -le 1388 ]]; then
+				echo $num1 > /sys/class/backlight/intel_backlight/brightness
+			else
+				echo 1388 > /sys/class/backlight/intel_backlight/brightness
+				echo "Max brightness exceeded"
+			fi
+		;;
+		dec)
+			curbright2=$(cat /sys/class/backlight/intel_backlight/brightness)
+			num2=$((curbright2-$2))
+			if [[ $num2 -ge 5 ]]; then
+				echo $num2 > /sys/class/backlight/intel_backlight/brightness
+			else
+				echo 5 > /sys/class/backlight/intel_backlight/brightness
+				echo "Minimum brightness exceeded"
+			fi
+		;;
+		*)
+			echo "Invalid argument"
+		;;
+	esac
+elif [[ $# == 1 ]]; then
+	if [[ "$1" -ge 1 ]] && [[ "$1" -le 1388 ]]; then
+		echo $1 > /sys/class/backlight/intel_backlight/brightness
+		echo "Screen brightness changed to $1"
+	else
+		echo "Brightness values between 1 and 1388 are supported"
+	fi
+else
+	echo "Invalid arguments"
+fi
+
